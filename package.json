@@ -7,12 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "cypress:open": "npx cypress open",
     "cypress:run": "npx cypress run",
-    "cypress:chrome": "npx cypress run --browser chrome"
+    "cypress:chrome": "npx cypress run --browser chrome",
+    "cypress:headlesschrome": "npx cypress run --browser chrome --headless"
   },
   "keywords": [],
-  "author": "",
+  "author": "ibrahim abdullah",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^13.6.2"
+    "cypress": "^13.6.2",
+    "cypress-xpath": "^2.0.1"
   }
 }

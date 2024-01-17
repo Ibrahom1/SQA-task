@@ -1,4 +1,4 @@
-/*Many test cases can be created for the server responses and invalid response but i have refrained from it and performed those that are mentioned and considered related to the task*/
+/*Many test cases can be created for the server responses and invalid responses and edge cases but were not mentioned in the task but i have refrained from it and performed those that are mentioned and considered related to the task*/
 const homepage = require("../pages/homepage");
 const bookstore = require("../pages/bookstore");
 describe("Verifying navigation to Test Pages", () => {

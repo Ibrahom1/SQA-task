@@ -78,37 +78,121 @@ describe("Verifying navigation to Test Pages", () => {
   });
 });
 describe("Verify Book API response", () => {
-  it("Should fetch and display correct book details from API", () => {
-    cy.intercept(
-      "GET",
-      "https://demoqa.com/BookStore/v1/Book?ISBN=9781593277574",
-      {
-        fixture: "book-details.json",
-      }
-    ).as("getBookDetails");
-    bookstore.visitBookStorePage();
-    bookstore.elements.ecmaBook().click();
-    cy.wait("@getBookDetails");
-    cy.get("@getBookDetails").then((response) => {
-      const body = response.response.body;
-      expect(body.isbn).to.equal("9781593277574");
-      expect(body.title).to.equal("Understanding ECMAScript 6");
-      expect(body.subTitle).to.equal(
-        "The Definitive Guide for JavaScript Developers"
-      );
-      expect(body.author).to.equal("Nicholas C. Zakas");
-      const expectedPublishDate = new Date(
-        "2016-09-03T00:00:00.000Z"
-      ).toISOString();
-      expect(body.publish_date).to.equal(expectedPublishDate);
-      expect(body.publisher).to.equal("No Starch Press");
-      expect(body.pages).to.equal(352);
-      expect(body.description).to.equal(
-        "ECMAScript 6 represents the biggest update to the core of JavaScript in the history of the language. In Understanding ECMAScript 6, expert developer Nicholas C. Zakas provides a complete guide to the object types, syntax, and other exciting changes that E"
-      );
-      expect(body.website).to.equal(
-        "https://leanpub.com/understandinges6/read"
-      );
-    });
+  it("Check if the status of request is 200(OK)", () => {
+    cy.request('GET', "https://demoqa.com/BookStore/v1/Book?ISBN=9781593277574").its('status').should('equal', 200)
+  });
+  it('Check if JSON response object', () => {
+    cy.request({
+      method: 'GET',
+      url: 'https://demoqa.com/BookStore/v1/Book?ISBN=9781593277574',
+    }).its('body').should('be.a', 'object');
   });
 });
+it("Should fetch and display correct book details using intercept", () => {
+  cy.intercept(
+    "GET",
+    "https://demoqa.com/BookStore/v1/Book?ISBN=9781593277574"
+  ).as("getBookDetails");
+  bookstore.visitBookStorePage();
+  bookstore.elements.ecmaBook().click();
+  cy.wait("@getBookDetails");
+  cy.get("@getBookDetails").then((response) => {
+    expect(response.response.body.isbn).to.equal("9781593277574");
+    expect(response.response.body.title).to.equal("Understanding ECMAScript 6");
+    expect(response.response.body.subTitle).to.equal(
+      "The Definitive Guide for JavaScript Developers"
+    );
+    expect(response.response.body.author).to.equal("Nicholas C. Zakas");
+    const expectedPublishDate = new Date(
+      "2016-09-03T00:00:00.000Z"
+    ).toISOString();
+    expect(response.response.body.publish_date).to.equal(expectedPublishDate);
+    expect(response.response.body.publisher).to.equal("No Starch Press");
+    expect(response.response.body.pages).to.equal(352);
+    expect(response.response.body.description).to.equal(
+      "ECMAScript 6 represents the biggest update to the core of JavaScript in the history of the language. In Understanding ECMAScript 6, expert developer Nicholas C. Zakas provides a complete guide to the object types, syntax, and other exciting changes that E"
+    );
+    expect(response.response.body.website).to.equal(
+      "https://leanpub.com/understandinges6/read"
+    );
+  });
+});
+it("Should fetch and display correct book attributes using intercept", () => {
+  cy.intercept(
+    "GET",
+    "https://demoqa.com/BookStore/v1/Book?ISBN=9781593277574",
+  ).as("getBookDetails");
+  bookstore.visitBookStorePage();
+  bookstore.elements.ecmaBook().click();
+  cy.wait("@getBookDetails");
+  cy.get("@getBookDetails").then((response) => {
+    expect(response.response.body).has.property("isbn");
+    expect(response.response.body).has.property("title");
+    expect(response.response.body).has.property(
+      "subTitle"
+    );
+    expect(response.response.body).has.property("author");
+    const expectedPublishDate = new Date(
+      "2016-09-03T00:00:00.000Z"
+    ).toISOString();
+    expect(response.response.body).has.property('publish_date');
+    expect(response.response.body).has.property("publisher");
+    expect(response.response.body).has.property('pages');
+    expect(response.response.body).has.property("description");
+    expect(response.response.body).to.have.property(
+      "website"
+    );
+  });
+});
+it("Should fetch and check correct book details from API using fixtures", () => {
+  cy.fixture('book-details').then((data) => {
+    const reqBody = data
+    cy.request({
+      method: 'GET',
+      url: 'https://demoqa.com/BookStore/v1/Book?ISBN=9781593277574',
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+      expect(response.body.isbn).to.eq(reqBody.isbn)
+      expect(response.body.title).to.eq(reqBody.title)
+      expect(response.body.subTitle).to.eq(reqBody.subTitle)
+      expect(response.body.author).to.eq(reqBody.author)
+      expect(response.body.publish_date).to.eq(reqBody.publish_date)
+      expect(response.body.publisher).to.eq(reqBody.publisher)
+      expect(response.body.pages).to.eq(reqBody.pages)
+      expect(response.body.description).to.eq(reqBody.description)
+      expect(response.body.website).to.eq(reqBody.website)
+    })
+  })
+});
+
+it("Should fetch and check correct book details from API without fixtures", () => {
+  const reqBody = {
+    "isbn": "9781593277574",
+    "title": "Understanding ECMAScript 6",
+    "subTitle": "The Definitive Guide for JavaScript Developers",
+    "author": "Nicholas C. Zakas",
+    "publish_date": "2016-09-03T00:00:00.000Z",
+    "publisher": "No Starch Press",
+    "pages": 352,
+    "description": "ECMAScript 6 represents the biggest update to the core of JavaScript in the history of the language. In Understanding ECMAScript 6, expert developer Nicholas C. Zakas provides a complete guide to the object types, syntax, and other exciting changes that E",
+    "website": "https://leanpub.com/understandinges6/read"
+  }
+  cy.request({
+    method: 'GET',
+    url: 'https://demoqa.com/BookStore/v1/Book?ISBN=9781593277574',
+  }).then((response) => {
+    expect(response.status).to.eq(200)
+    expect(response.body.isbn).to.eq(reqBody.isbn)
+    expect(response.body.title).to.eq(reqBody.title)
+    expect(response.body.subTitle).to.eq(reqBody.subTitle)
+    expect(response.body.author).to.eq(reqBody.author)
+    expect(response.body.publish_date).to.eq(reqBody.publish_date)
+    expect(response.body.publisher).to.eq(reqBody.publisher)
+    expect(response.body.pages).to.eq(reqBody.pages)
+    expect(response.body.description).to.eq(reqBody.description)
+    expect(response.body.website).to.eq(reqBody.website)
+  })
+})
+
+
+

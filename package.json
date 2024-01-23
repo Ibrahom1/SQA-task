@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "cypress:open": "npx cypress open",
-    "cypress:run": "npx cypress run",
     "cypress:chrome": "npx cypress run --browser chrome",
     "cypress:headlesschrome": "npx cypress run --browser chrome --headless",
     "cypress:runall": "npx cypress run --spec \"cypress/e2e/task1_verify_form.cy.js,cypress/e2e/task2_verify_resizable.cy.js,cypress/e2e/task3_verify_api_intercept.cy.js\" --browser chrome"
